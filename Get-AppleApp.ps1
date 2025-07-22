@@ -55,6 +55,8 @@ function Get-AppleApp {
         }
     } process {
         foreach ($id in $ids) {
+            #TODO: Properly encode the search term:
+            ## URL encoding replaces spaces with the plus (+) character and all characters except the following are encoded: letters, numbers, periods (.), dashes (-), underscores (_), and asterisks (*).
             $params.Body.$searchTerm = $id -replace ' ', '+'
             (Invoke-RestMethod @params).results
         }
