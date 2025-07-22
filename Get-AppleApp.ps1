@@ -5,6 +5,8 @@
 .LINK
     https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/Searching.html#//apple_ref/doc/uid/TP40017632-CH5-SW1
     https://performance-partners.apple.com/search-api
+.NOTES
+    Author: Michael Hollingsworth
 #>
 function Get-AppleApp {
     [CmdletBinding(DefaultParameterSetName = 'BundleId')]
