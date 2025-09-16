@@ -1,6 +1,10 @@
 class WindowsUpdate {
     hidden [__ComObject]$_updateObject
 
+    WindowsUpdate([__ComObject]$Update) {
+         $this._UpdateObject = $Update
+    }
+
     [Void] AcceptEula() {
         if ($null -eq $this._updateObject) {
             return
@@ -52,6 +56,9 @@ class WindowsUpdate {
     }
 
     [Void] Install() {
+        if () {
+            #throw if the object isnt an IUpdate object
+        }
         $this.Install($false)
     }
 
@@ -100,11 +107,44 @@ class WindowsUpdate {
 
         return
     }
+
+    static [WindowsUpdate[]] GetUpdates() {
+        [WindowsUpdate]::Search('IsInstalled = 0')
+    }
+
+    static [WindowsUpdate[]] GetInstalledUpdates() {
+        #TODO: Look into the other ways of searching for installed updates
+        [WindowsUpdate]::Search('Installed = 1')
+    }
+
+    static [WindowsUpdate[]] Search([String]$SearchQuery) {
+        try {
+            [__ComObject]$updateSession = New-Object -ComObject Microsoft.Update.Session
+            [__ComObject]$updateSearcher = $updateSession.CreateUpdateSearcher()
+
+            [__ComObject]$searchResults = $updateSearcher.Search($SearchQuery)
+
+            foreach ($update in $searchResults.Updates) {
+                [WindowsUpdate]::new($update)
+            }
+        } finally {
+            if ($null -ne $updateSession) {
+                #release com object
+            }
+            if ($null -ne $updateSearcher) {
+                #release com object
+            }
+            if ($null -ne $searchResults) {
+                #release com object
+            }
+        }
+    }
 }
 
 Update-TypeData -TypeName WindowsUpdate -MemberName Title MemberType ScriptProperty -Value { return ($this._updateObject.Title) }
 Update-TypeData -TypeName WindowsUpdate -MemberName Description MemberType ScriptProperty -Value { return ($this._updateObject.Description) }
 Update-TypeData -TypeName WindowsUpdate -MemberName Category MemberType ScriptProperty -Value { return (Select-Object -InputObject $this._updateObject -Property Categories) }
+Update-TypeData -TypeName WindowsUpdate -MemberName Type MemberType ScriptProperty -Value { return (Select-Object -InputObject $this._updateObject -Property Type) }
 Update-TypeData -TypeName WindowsUpdate -MemberName IsDownloaded MemberType ScriptProperty -Value { return ($this._updateObject.IsDownloaded) }
 Update-TypeData -TypeName WindowsUpdate -MemberName IsInstalled MemberType ScriptProperty -Value { return ($this._updateObject.IsInstalled) }
 Update-TypeData -TypeName WindowsUpdate -MemberName IsEulaAccepted MemberType ScriptProperty -Value { return ($this._updateObject.EulaAccepted) }
