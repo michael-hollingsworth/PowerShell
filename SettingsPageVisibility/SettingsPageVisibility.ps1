@@ -75,11 +75,11 @@ class SettingsPageVisibility {
         }
 
         if ($null -eq $this._modifier) {
-            Remove-ItemProperty -LiteralPath $keyPath -Name 'SettingsPageVisibility' -Force
+            Remove-ItemProperty -LiteralPath $keyPath -Name 'SettingsPageVisibility' -Force -ErrorAction Stop
             return
         }
 
-        Set-ItemProperty -LiteralPath $keyPath -Name 'SettingsPageVisibility' -Value $this.Value -Force
+        Set-ItemProperty -LiteralPath $keyPath -Name 'SettingsPageVisibility' -Value $this.Value -Force -ErrorAction Stop
     }
 
     [String] ToString() {
