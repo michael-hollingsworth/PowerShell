@@ -104,6 +104,28 @@ class SettingsPageVisibility {
         }
     }
 
+    static [SettingsPageVisibility] FromHiddenSettings([String[]]$HiddenSettings) {
+        return [SettingsPageVisibility]::FromShownSettings($HiddenSettings, [SettingsPageVisibilityModifier]::Hide)
+    }
+
+    static [SettingsPageVisibility] FromHiddenSettings([String[]]$HiddenSettings, [SettingsPageVisibilityModifier]$Modifier) {
+        [SettingsPageVisibility]$spv = [SettingsPageVisibility]::new()
+        $spv.Modifier = $Modifier
+        $spv.HiddenSettings = $HiddenSettings
+        return $spv
+    }
+
+    static [SettingsPageVisibility] FromShownSettings([String[]]$ShownSettings) {
+        return [SettingsPageVisibility]::FromShownSettings($ShownSettings, [SettingsPageVisibilityModifier]::Hide)
+    }
+
+    static [SettingsPageVisibility] FromShownSettings([String[]]$ShownSettings, [SettingsPageVisibilityModifier]$Modifier) {
+        [SettingsPageVisibility]$spv = [SettingsPageVisibility]::new()
+        $spv.Modifier = $Modifier
+        $spv.ShownSettings = $ShownSettings
+        return $spv
+    }
+
     hidden static [String]$spvKeyPath = 'SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer'
     hidden static [System.Text.RegularExpressions.Regex]$spvPattern = [System.Text.RegularExpressions.Regex]::new('^(hide|showonly):(|([\w\-]+(?:;[\w\-]+)*))$', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
 
