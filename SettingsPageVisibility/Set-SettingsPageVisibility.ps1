@@ -14,7 +14,7 @@
     The Hide modifier only hides settings that are explicitly defined as being hidden.
     The ShowOnly modifier hides all settings that aren't explicitly defined as being shown.
 .PARAMETER Scope
-    Configures the SettingsPageVisibility registry property in the HKEY_CURRENT_USER registry hive instead of the HKEY_LOCAL_MACHINE hive.
+    Configures the SettingsPageVisibility registry property in the HKEY_CURRENT_USER registry hive or the HKEY_LOCAL_MACHINE hive.
 .PARAMETER PassThru
     Passes an object that represents the item to the pipeline. By default, this function does not generate any output.
 .PARAMETER Force
