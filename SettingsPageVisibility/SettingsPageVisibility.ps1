@@ -447,3 +447,13 @@ Update-TypeData -TypeName SettingsPageVisibility -MemberName Value -MemberType S
 
     $this.ParseValue($Value)
 }
+
+# This class can be used for validating parameters on PowerShell 6+
+## https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_advanced_parameters#dynamic-validateset-values-using-classes
+## https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_functions_argument_completion#dynamic-validateset-values-using-classes
+### [ValidateSet([SettingsPageValidateSet])]
+<# class SettingsPageValidateSet : System.Management.Automation.IValidateSetValuesGenerator {
+    [String[]] GetValidValues() {
+        return [SettingsPageVisibility]::SettingsPageVisibilitySettings
+    }
+} #>
