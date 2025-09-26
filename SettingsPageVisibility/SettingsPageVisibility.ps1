@@ -26,7 +26,7 @@ class SettingsPageVisibility {
     }
 
     hidden [Void] ParseValue([String]$Value) {
-        if ([String]::IsNullOrWhiteSpace($Value) {
+        if ([String]::IsNullOrWhiteSpace($Value)) {
             $this.Clear()
             return
         }
