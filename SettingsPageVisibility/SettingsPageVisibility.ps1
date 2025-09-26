@@ -26,16 +26,16 @@ class SettingsPageVisibility {
     }
 
     hidden [Void] ParseValue([String]$Value) {
+        if ([String]::IsNullOrWhiteSpace($Value) {
+            $this.Clear()
+            return
+        }
+    
         [System.Text.RegularExpressions.Group]$spvMatches = ([SettingsPageVisibility]::spvPattern).Match($Value)
 
         if ($spvMatches.Success -ne $true) {
             #TODO: should we throw?
-            Write-Error -Category InvalidData -TargetObject $Value -Message "The SettingsPageVisbility value [$Value] does not match the expected pattern [$(([SettingsPageVisibility]::spvPattern).ToString())]."
-        }
-
-        if ([String]::IsNullOrWhiteSpace($Value)) {
-            $this.Clear()
-            return
+            Write-Error -Category InvalidData -TargetObject $Value -Message "The SettingsPageVisibility value [$Value] does not match the expected pattern [$(([SettingsPageVisibility]::spvPattern).ToString())]."
         }
 
         if ($spvMatches.Groups[1].Value -eq 'hide') {
