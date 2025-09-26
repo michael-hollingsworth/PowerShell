@@ -50,7 +50,7 @@ class SettingsPageVisibility {
             $this._hiddenSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $this._shownSettings }
             $this._modifier = [SettingsPageVisibilityModifier]::ShowOnly
         } else {
-            throw 'An unknown error occured. Fix the regex'
+            throw 'An unknown error occurred. Fix the regex'
         }
 
         $this._value = $Value
@@ -379,7 +379,7 @@ Update-TypeData -TypeName SettingsPageVisibility -MemberName Modifier -MemberTyp
         ([SettingsPageVisibilityModifier]::ShowOnly.ToString() + ':' + ([String]::Join(';', $this._shownSettings))).ToLower()
     }
 }
-Update-TypeData -TypeName SettingsPageVisibility -MemberName HiddenSettings -MemberType ScriptProperty -Value { return $this._hiddenSettings } -SecondValue {
+Update-TypeData -TypeName SettingsPageVisibility -MemberName HiddenSettings -MemberType ScriptProperty -Value { if ($this._hiddenSettings.Count -eq 1) { return @(, $this._hiddenSettings) } else { return $this._hiddenSettings } } -SecondValue {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 0)]
@@ -409,7 +409,7 @@ Update-TypeData -TypeName SettingsPageVisibility -MemberName HiddenSettings -Mem
     $this.ParseValue($string)
     return
 }
-Update-TypeData -TypeName SettingsPageVisibility -MemberName ShownSettings -MemberType ScriptProperty -Value { return $this._shownSettings } -SecondValue {
+Update-TypeData -TypeName SettingsPageVisibility -MemberName ShownSettings -MemberType ScriptProperty -Value { if ($this._shownSettings.Count -eq 1) { return @(, $this._shownSettings) } else { return $this._shownSettings } } -SecondValue {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true, Position = 0)]
