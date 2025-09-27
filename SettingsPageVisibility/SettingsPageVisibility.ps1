@@ -132,7 +132,7 @@ class SettingsPageVisibility {
     }
 
     hidden static [String]$spvKeyPath = 'SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer'
-    hidden static [System.Text.RegularExpressions.Regex]$spvPattern = [System.Text.RegularExpressions.Regex]::new('^(hide|showonly):(|([\w\-]+(?:;[\w\-]+)*))$', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+    hidden static [System.Text.RegularExpressions.Regex]$spvPattern = [System.Text.RegularExpressions.Regex]::new('^(hide|showonly):([\w\-]+(?:;[\w\-]+)*;?)*$', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
 
     static [String[]]$SettingsPageVisibilitySettings = @(
         'About',
