@@ -30,30 +30,31 @@ class SettingsPageVisibility {
             $this.Clear()
             return
         }
-    
+
         [System.Text.RegularExpressions.Group]$spvMatches = ([SettingsPageVisibility]::spvPattern).Match($Value)
 
         if ($spvMatches.Success -ne $true) {
-            #TODO: should we throw?
-            Write-Error -Category InvalidData -TargetObject $Value -Message "The SettingsPageVisibility value [$Value] does not match the expected pattern [$(([SettingsPageVisibility]::spvPattern).ToString())]."
+            throw [System.Management.Automation.ErrorRecord]::new(
+                [System.Management.Automation.ParameterBindingException]::new("Cannot validate the argument on parameter [Value]. The argument [$Value] does not match the pattern [$(([SettingsPageVisibility]::spvPattern).ToString())]."),
+                'ParameterArgumentValidationError',
+                [System.Management.Automation.ErrorCategory]::InvalidData,
+                $Value
+            )
         }
+
+        [String[]]$values = $spvMatches.Groups[2].Value.Split(';')
 
         if ($spvMatches.Groups[1].Value -eq 'hide') {
-            #TODO: Replace all of this with a custom Enumeration class that supports 200+ flags and support for a secondary property that contains the 
-            [String[]]$hiddenVals = $spvMatches.Groups[2].Value.Split(';')
-            $this._shownSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $hiddenVals }
+            $this._shownSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $values }
             $this._hiddenSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $this._shownSettings }
             $this._modifier = [SettingsPageVisibilityModifier]::Hide
+            $this._value = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ([String]::Join(';', $this._hiddenSettings))).ToLower()
         } elseif ($spvMatches.Groups[1].Value -eq 'showonly') {
-            [String[]]$shownVals = $spvMatches.Groups[2].Value.Split(';')
-            $this._shownSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -in $shownVals }
+            $this._shownSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -in $values }
             $this._hiddenSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $this._shownSettings }
             $this._modifier = [SettingsPageVisibilityModifier]::ShowOnly
-        } else {
-            throw 'An unknown error occurred. Fix the regex'
+            $this._value = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ([String]::Join(';', $this._shownSettings))).ToLower()
         }
-
-        $this._value = $Value
     }
 
     [Void] Clear() {
@@ -91,17 +92,21 @@ class SettingsPageVisibility {
     }
 
     static [SettingsPageVisibility] Get([SettingsPageVisibilityScope]$Scope) {
-        $explorer = if ($Scope -eq [SettingsPageVisibilityScope]::Computer) {
-            Get-ItemProperty -LiteralPath "HKLM:$([SettingsPageVisibility]::spvKeyPath)" -ErrorAction Ignore
+        [String]$regKeyPath = if ($Scope -eq [SettingsPageVisibilityScope]::Computer) {
+            "HKLM:$([SettingsPageVisibility]::spvKeyPath)"
         } else {
-            Get-ItemProperty -LiteralPath "HKCU:$([SettingsPageVisibility]::spvKeyPath)" -ErrorAction Ignore
+            "HKCU:$([SettingsPageVisibility]::spvKeyPath)"
         }
 
-        if (($explorer.PSObject.Properties.Name -contains 'SettingsPageVisibility') -and (-not [String]::IsNullOrWhiteSpace($explorer.SettingsPageVisibility))) {
-            return [SettingsPageVisibility]::new($explorer.SettingsPageVisibility)
-        } else {
-            return [SettingsPageVisibility]::new()
+        if (($regKey = Get-Item -LiteralPath $regKeyPath -ErrorAction Stop) -and ($regKey.GetValueNames().Contains('SettingsPageVisibility'))) {
+            [SettingsPageVisibility]$spv = [SettingsPageVisibility]::new($regKey.SettingsPageVisibility)
+            # Manually set the Value property to the exact value in the registry key.
+            ## Calling the new($Value) constructor includes logic to ensure that each settings page only appears once and that invalid settings page values are removed.
+            $spv._value = $regKey.SettingsPageVisibility
+            return $spv
         }
+
+        return [SettingsPageVisibility]::new()
     }
 
     static [SettingsPageVisibility] FromHiddenSettings([String[]]$HiddenSettings) {
@@ -400,10 +405,10 @@ Update-TypeData -TypeName SettingsPageVisibility -MemberName HiddenSettings -Mem
 
     #TODO: ensure that parsing methods can parse empty arrays (eg. hide:none or showonly:none)
     if ($this._modifier -eq [SettingsPageVisibilityModifier]::Hide) {
-        [String]$string = (($this._modifier).ToString() + ':' + ([String]::Join(';', $HiddenSettings))).ToLower()
+        [String]$string = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ([String]::Join(';', $HiddenSettings))).ToLower()
     } else {
         [String[]]$shownSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $HiddenSettings }
-        [String]$string = (($this._modifier).ToString() + ':' + ([String]::Join(';', $shownSettings))).ToLower()
+        [String]$string = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ([String]::Join(';', $shownSettings))).ToLower()
     }
 
     $this.ParseValue($string)
@@ -430,9 +435,9 @@ Update-TypeData -TypeName SettingsPageVisibility -MemberName ShownSettings -Memb
 
     if ($this._modifier -eq [SettingsPageVisibilityModifier]::Hide) {
         [String[]]$hiddenSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $ShownSettings }
-        [String]$string = (($this._modifier).ToString() + ':' + ([String]::Join(';', $hiddenSettings))).ToLower()
+        [String]$string = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ([String]::Join(';', $hiddenSettings))).ToLower()
     } else {
-        [String]$string = (($this._modifier).ToString() + ':' + ([String]::Join(';', $ShownSettings))).ToLower()
+        [String]$string = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ([String]::Join(';', $ShownSettings))).ToLower()
     }
 
     $this.ParseValue($string)
