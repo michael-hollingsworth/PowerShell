@@ -48,12 +48,12 @@ class SettingsPageVisibility {
             $this._shownSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $values }
             $this._hiddenSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $this._shownSettings }
             $this._modifier = [SettingsPageVisibilityModifier]::Hide
-            $this._value = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ([String]::Join(';', $this._hiddenSettings))).ToLower()
+            $this._value = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ($this._hiddenSettings -join ';')).ToLower()
         } elseif ($spvMatches.Groups[1].Value -eq 'showonly') {
             $this._shownSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -in $values }
             $this._hiddenSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $this._shownSettings }
             $this._modifier = [SettingsPageVisibilityModifier]::ShowOnly
-            $this._value = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ([String]::Join(';', $this._shownSettings))).ToLower()
+            $this._value = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ($this._shownSettings -join ';')).ToLower()
         }
     }
 
@@ -379,9 +379,9 @@ Update-TypeData -TypeName SettingsPageVisibility -MemberName Modifier -MemberTyp
 
     $this._modifier = $Modifier
     $this._value = if ($Modifier -eq [SettingsPageVisibilityModifier]::Hide) {
-        ([SettingsPageVisibilityModifier]::Hide.ToString() + ':' + ([String]::Join(';', $this._hiddenSettings))).ToLower()
+        ([SettingsPageVisibilityModifier]::Hide.ToString() + ':' + ($this._hiddenSettings -join ';')).ToLower()
     } else {
-        ([SettingsPageVisibilityModifier]::ShowOnly.ToString() + ':' + ([String]::Join(';', $this._shownSettings))).ToLower()
+        ([SettingsPageVisibilityModifier]::ShowOnly.ToString() + ':' + ($this._shownSettings -join ';')).ToLower()
     }
 }
 Update-TypeData -TypeName SettingsPageVisibility -MemberName HiddenSettings -MemberType ScriptProperty -Value { if ($this._hiddenSettings.Count -eq 1) { return @(, $this._hiddenSettings) } else { return $this._hiddenSettings } } -SecondValue {
@@ -405,10 +405,10 @@ Update-TypeData -TypeName SettingsPageVisibility -MemberName HiddenSettings -Mem
 
     #TODO: ensure that parsing methods can parse empty arrays (eg. hide:none or showonly:none)
     if ($this._modifier -eq [SettingsPageVisibilityModifier]::Hide) {
-        [String]$string = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ([String]::Join(';', $HiddenSettings))).ToLower()
+        [String]$string = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ($HiddenSettings -join ';')).ToLower()
     } else {
         [String[]]$shownSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $HiddenSettings }
-        [String]$string = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ([String]::Join(';', $shownSettings))).ToLower()
+        [String]$string = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ($shownSettings -join ';')).ToLower()
     }
 
     $this.ParseValue($string)
@@ -435,9 +435,9 @@ Update-TypeData -TypeName SettingsPageVisibility -MemberName ShownSettings -Memb
 
     if ($this._modifier -eq [SettingsPageVisibilityModifier]::Hide) {
         [String[]]$hiddenSettings = [SettingsPageVisibility]::SettingsPageVisibilitySettings | Where-Object { $_ -notin $ShownSettings }
-        [String]$string = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ([String]::Join(';', $hiddenSettings))).ToLower()
+        [String]$string = (([SettingsPageVisibilityModifier]::Hide).ToString() + ':' + ($hiddenSettings -join ';')).ToLower()
     } else {
-        [String]$string = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ([String]::Join(';', $ShownSettings))).ToLower()
+        [String]$string = (([SettingsPageVisibilityModifier]::ShowOnly).ToString() + ':' + ($ShownSettings -join ';')).ToLower()
     }
 
     $this.ParseValue($string)
