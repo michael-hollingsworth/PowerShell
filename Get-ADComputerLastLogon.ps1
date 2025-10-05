@@ -34,21 +34,21 @@ function Get-ADComputerLastLogon {
             $soProperties += $Properties
         }
     } process {
-    $computers = if ($PSCmdlet.ParameterSetName -eq 'Filter') {
-        [HashTable]$gadcSplat = @{
-            Filter = $Filter
-            ErrorAction = [System.Management.Automation.ActionPreference]::Stop
-        }
+        [Microsoft.ActiveDirectory.Management.ADComputer[]]$computers = if ($PSCmdlet.ParameterSetName -eq 'Filter') {
+            [HashTable]$gadcSplat = @{
+                Filter = $Filter
+                ErrorAction = [System.Management.Automation.ActionPreference]::Stop
+            }
 
-        if (-not [String]::IsNullOrWhiteSpace($SearchBase)) {
-            $gadcSplat.Add('SearchBase', $SearchBase)
-        }
+            if (-not [String]::IsNullOrWhiteSpace($SearchBase)) {
+                $gadcSplat.Add('SearchBase', $SearchBase)
+            }
 
-        Get-ADComputer @gadcSplat
-    } else {
-    foreach ($id in $Identity) {
-        Get-ADComputer -Identity $id -Properties $searchProperties -ErrorAction Continue
-    }
+            Get-ADComputer @gadcSplat
+        } else {
+            foreach ($id in $Identity) {
+                Get-ADComputer -Identity $id -Properties $searchProperties -ErrorAction Continue
+            }
         }
 
         foreach ($comp in $computers) {

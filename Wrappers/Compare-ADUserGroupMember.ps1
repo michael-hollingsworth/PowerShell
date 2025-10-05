@@ -12,11 +12,11 @@ function Compare-ADUserGroupMember {
     )
 
     begin {
-        if -not (($ReferenceObject -is [String] -or $ReferenceObject -is [ADUser])) {
+        if (-not (($ReferenceObject -is [String]) -or ($ReferenceObject -is [ADUser]))) {
             throw
         }
 
-        if -not (($DifferenceObject -is [String] -or $DifferenceObject -is [ADUser])) {
+        if (-not (($DifferenceObject -is [String]) -or ($DifferenceObject -is [ADUser]))) {
             throw
         }
 

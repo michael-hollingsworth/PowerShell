@@ -3,7 +3,7 @@ class WindowsUpdate {
     hidden [__ComObject]$_updateObject
 
     WindowsUpdate([__ComObject]$Update) {
-         $this._UpdateObject = $Update
+        $this._UpdateObject = $Update
     }
 
     [Void] AcceptEula() {
