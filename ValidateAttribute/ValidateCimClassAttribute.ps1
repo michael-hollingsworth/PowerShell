@@ -7,7 +7,7 @@
         [CmdletBinding()]
         param (
             [Parameter(Mandatory = $true, Position = 0)]
-            [ValidateCimClass('Win32_UserProfile')]
+            [ValidateCimClass(ClassName = 'Win32_UserProfile')]
             $CimInstance
         )
     }
@@ -23,11 +23,16 @@
     Test-Cim -CimInstance (Get-CimInstance -ClassName Win32_ComputerSystem)
     ```
 .NOTES
+    This attribute can be defined as either `[ValidateCimClass('<CLASS_NAME>')]` or `[ValidateCimClass(ClassName = '<CLASS_NAME>')]`.
+.NOTES
     Author: Michael Hollingsworth
 #>
 class ValidateCimClassAttribute : System.Management.Automation.ValidateArgumentsAttribute {
     [ValidateNotNullOrEmpty()]
     [String]$ClassName
+
+    ValidateCimClassAttribute() {
+    }
 
     ValidateCimClassAttribute([String]$ClassName) {
         if ([String]::IsNullOrWhiteSpace($ClassName)) {

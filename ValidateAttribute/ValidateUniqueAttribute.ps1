@@ -34,7 +34,7 @@
         [CmdletBinding()]
         param (
             [Parameter(Mandatory = $true, Position = 0)]
-            [ValidateUnique('Year')]
+            [ValidateUnique(Property = 'Year')]
             $UniqueParameter
         )
     }
@@ -55,6 +55,8 @@
         [DateTime]::new(1, 2, 2)
     )
     ```
+.NOTES
+    This attribute can be defined as either `[ValidateUnique()]`, `[ValidateUnique('<PROPERTY>')]` or `[ValidateUnique(Property = '<PROPERTY>')]`.
 .NOTES
     Author: Michael Hollingsworth
 #>
