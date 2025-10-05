@@ -105,6 +105,10 @@ class ValidateUniqueAttribute : System.Management.Automation.ValidateArgumentsAt
     }
 
     [String] ToString() {
-        return "[ValidateUniqueAttribute($($this.Property))]"
+        if ([String]::IsNullOrWhiteSpace($this.Property)) {
+            return '[ValidateUniqueAttribute()]'
+        }
+
+        return "[ValidateUniqueAttribute('$($this.Property)')]"
     }
 }

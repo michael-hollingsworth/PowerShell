@@ -80,6 +80,10 @@ class ValidateComTypeAttribute : System.Management.Automation.ValidateArgumentsA
     }
 
     [String] ToString() {
-        return "[ValidateComTypeAttribute($($this.Type))]"
+        if ($this.Type.Count -eq 1) {
+            return "[ValidateComTypeAttribute(Type = '$($this.Type)')]"
+        }
+
+        return "[ValidateComTypeAttribute(Type = ('$($this.Type -join "', '")'))]"
     }
 }

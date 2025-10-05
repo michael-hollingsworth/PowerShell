@@ -48,6 +48,6 @@ class ValidateNotNullOrWhiteSpaceAttribute : System.Management.Automation.Valida
     }
 
     [String] ToString() {
-        return "[ValidatenotNullOrWhiteSpaceAttribute()]"
+        return '[ValidatenotNullOrWhiteSpaceAttribute()]'
     }
 }

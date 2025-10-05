@@ -59,7 +59,7 @@ class ValidateCimClassAttribute : System.Management.Automation.ValidateArguments
     }
 
     [String] ToString() {
-        return "[ValidateCimClassAttribute($($this.ClassName))]"
+        return "[ValidateCimClassAttribute('$($this.ClassName)')]"
     }
 }
 
@@ -92,6 +92,6 @@ class ValidateCimClassAttribute2 : System.Management.Automation.ValidateEnumerat
     }
 
     [String] ToString() {
-        return "[ValidateCimClassAttribute($($this.ClassName))]"
+        return "[ValidateCimClassAttribute('$($this.ClassName)')]"
     }
 }
