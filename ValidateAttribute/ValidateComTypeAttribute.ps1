@@ -1,13 +1,13 @@
 <#
-.DESCRIPTION
-
+.SYNOPSIS
+    Validates that a COM object is of a specific type.
 .EXAMPLE
     ```PowerShell
     function Test-Com {
         [CmdletBinding()]
         param (
             [Parameter(Mandatory = $true, Position = 0)]
-            [ValidateComType('IUpdateSession3')]
+            [ValidateComType(Type = ('IUpdateSession', 'IUpdateSession2', 'IUpdateSession3'))]
             $ComObject
         )
     }
@@ -23,6 +23,8 @@
     Test-Com -ComObject (New-Object -ComObject Microsoft.Update.Searcher)
     ```
 .NOTES
+    This attribute can be defined as either `[ValidateComType('<CLASS_NAME>')]` or `[ValidateCimClass(Type = ('<TYPE_NAME_1>', '<TYPE_NAME_2>', ...))]`.
+.NOTES
     Author: Michael Hollingsworth
 #>
 Add-Type -AssemblyName Microsoft.VisualBasic
@@ -30,6 +32,9 @@ Add-Type -AssemblyName Microsoft.VisualBasic
 class ValidateComTypeAttribute : System.Management.Automation.ValidateArgumentsAttribute {
     [ValidateNotNullOrEmpty()]
     [String[]]$Type
+
+    ValidateComTypeAttribute() {
+    }
 
     ValidateComTypeAttribute([String]$Type) {
         if ([String]::IsNullOrWhiteSpace($Type)) {
@@ -42,6 +47,21 @@ class ValidateComTypeAttribute : System.Management.Automation.ValidateArgumentsA
         }
 
         $this.Type = @(, $Type)
+    }
+
+    ValidateComTypeAttribute([String[]]$Type) {
+        foreach ($string in $Type) {
+            if ([String]::IsNullOrWhiteSpace($string)) {
+                throw [System.Management.Automation.ErrorRecord]::new(
+                    [System.ArgumentNullException]::new('Type'),
+                    'ArgumentIsNullOrWhiteSpace',
+                    [System.Management.Automation.ErrorCategory]::InvalidArgument,
+                    $string
+                )
+            }
+        }
+
+        $this.Type = $Type
     }
 
     <# ValidateComTypeAttribute([String[]]$Type) {
