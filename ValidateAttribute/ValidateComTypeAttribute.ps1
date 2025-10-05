@@ -64,14 +64,6 @@ class ValidateComTypeAttribute : System.Management.Automation.ValidateArgumentsA
         $this.Type = $Type
     }
 
-    <# ValidateComTypeAttribute([String[]]$Type) {
-        $this.Type = $Type
-    } #>
-
-    <# ValidateComTypeAttribute([__ComObject]$ComObject) {
-        $this.Type = [Microsoft.VisualBasic.Information]::TypeName($ComObject)
-    } #>
-
     [Void] Validate([Object]$arguments, [System.Management.Automation.EngineIntrinsics]$engineIntrinsics) {
         [String]$argumentType = [Microsoft.VisualBasic.Information]::TypeName($arguments)
 
