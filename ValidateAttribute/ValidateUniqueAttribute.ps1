@@ -96,8 +96,8 @@ class ValidateUniqueAttribute : System.Management.Automation.ValidateArgumentsAt
             }
 
             throw [System.Management.Automation.ValidationMetadataException]::new(
-                "The element [$elementToValidate] is a duplicate",
-                [System.Management.Automation.PSArgumentException]::new("The element [$elementToValidate] is a duplicate")
+                "The argument '$elementToValidate' is a duplicate value.",
+                [System.Management.Automation.PSArgumentException]::new("The argument '$elementToValidate' is a duplicate value.")
             )
         }
     }
