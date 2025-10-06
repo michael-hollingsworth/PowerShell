@@ -37,7 +37,7 @@ class ValidateCimClassAttribute : System.Management.Automation.ValidateArguments
     ValidateCimClassAttribute([String]$ClassName) {
         if ([String]::IsNullOrWhiteSpace($ClassName)) {
             throw [System.Management.Automation.ErrorRecord]::new(
-                [System.ArgumentNullException]::new('ClassName'),
+                [System.Management.Automation.PSArgumentNullException]::new('ClassName'),
                 'ArgumentIsNullOrWhiteSpace',
                 [System.Management.Automation.ErrorCategory]::InvalidArgument,
                 $ClassName
@@ -70,7 +70,7 @@ class ValidateCimClassAttribute2 : System.Management.Automation.ValidateEnumerat
     ValidateCimClassAttribute2([String]$ClassName) {
         if ([String]::IsNullOrWhiteSpace($ClassName)) {
             throw [System.Management.Automation.ErrorRecord]::new(
-                [System.ArgumentNullException]::new('ClassName'),
+                [System.Management.Automation.PSArgumentNullException]::new('ClassName'),
                 'ArgumentIsNullOrWhiteSpace',
                 [System.Management.Automation.ErrorCategory]::InvalidArgument,
                 $ClassName

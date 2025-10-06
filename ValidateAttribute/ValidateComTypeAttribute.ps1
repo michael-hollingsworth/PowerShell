@@ -39,7 +39,7 @@ class ValidateComTypeAttribute : System.Management.Automation.ValidateArgumentsA
     ValidateComTypeAttribute([String]$Type) {
         if ([String]::IsNullOrWhiteSpace($Type)) {
             throw [System.Management.Automation.ErrorRecord]::new(
-                [System.ArgumentNullException]::new('Type'),
+                [System.Management.Automation.PSArgumentNullException]::new('Type'),
                 'ArgumentIsNullOrWhiteSpace',
                 [System.Management.Automation.ErrorCategory]::InvalidArgument,
                 $Type
@@ -53,7 +53,7 @@ class ValidateComTypeAttribute : System.Management.Automation.ValidateArgumentsA
         foreach ($string in $Type) {
             if ([String]::IsNullOrWhiteSpace($string)) {
                 throw [System.Management.Automation.ErrorRecord]::new(
-                    [System.ArgumentNullException]::new('Type'),
+                    [System.Management.Automation.PSArgumentNullException]::new('Type'),
                     'ArgumentIsNullOrWhiteSpace',
                     [System.Management.Automation.ErrorCategory]::InvalidArgument,
                     $string
