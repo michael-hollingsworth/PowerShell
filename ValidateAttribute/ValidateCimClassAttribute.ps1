@@ -3,7 +3,7 @@
     Validates that a CIM instance is of the desired CIM class.
 .EXAMPLE
     ```PowerShell
-    function Test-Cim {
+    function Test-CimClass {
         [CmdletBinding()]
         param (
             [Parameter(Mandatory = $true, Position = 0)]
@@ -15,12 +15,12 @@
 
     Pass:
     ```PowerShell
-    Test-Cim -CimInstance (Get-CimInstance -ClassName Win32_UserProfile)
+    Test-CimClass -CimInstance (Get-CimInstance -ClassName Win32_UserProfile)
     ```
 
     Fail:
     ```PowerShell
-    Test-Cim -CimInstance (Get-CimInstance -ClassName Win32_ComputerSystem)
+    Test-CimClass -CimInstance (Get-CimInstance -ClassName Win32_ComputerSystem)
     ```
 .NOTES
     This attribute can be defined as either `[ValidateCimClass('<CLASS_NAME>')]` or `[ValidateCimClass(ClassName = '<CLASS_NAME>')]`.

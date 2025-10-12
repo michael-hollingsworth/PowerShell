@@ -3,27 +3,27 @@
     Validates that a COM object is of a specific type.
 .EXAMPLE
     ```PowerShell
-    function Test-Com {
+    function Test-ComType {
         [CmdletBinding()]
         param (
             [Parameter(Mandatory = $true, Position = 0)]
             [ValidateComType(Type = ('IUpdateSession', 'IUpdateSession2', 'IUpdateSession3'))]
-            $ComObject
+            [__ComObject]$ComObject
         )
     }
     ```
 
     Pass:
     ```PowerShell
-    Test-Com -ComObject (New-Object -ComObject Microsoft.Update.Session)
+    Test-ComType -ComObject (New-Object -ComObject Microsoft.Update.Session)
     ```
 
     Fail:
     ```PowerShell
-    Test-Com -ComObject (New-Object -ComObject Microsoft.Update.Searcher)
+    Test-ComType -ComObject (New-Object -ComObject Microsoft.Update.Searcher)
     ```
 .NOTES
-    This attribute can be defined as either `[ValidateComType('<CLASS_NAME>')]` or `[ValidateCimClass(Type = ('<TYPE_NAME_1>', '<TYPE_NAME_2>', ...))]`.
+    This attribute can be defined as either `[ValidateComType('<TYPE_NAME>')]`, `[ValidateComType('<TYPE_NAME_1>', '<TYPE_NAME_2>', ...)]`, or `[ValidateCimClass(Type = ('<TYPE_NAME>', '<TYPE_NAME_2>', ...))]`.
 .NOTES
     Author: Michael Hollingsworth
 #>
