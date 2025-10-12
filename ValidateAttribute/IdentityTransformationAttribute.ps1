@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Validates that a COM object is of a specific type.
+    Validates that a parameter value is a valid `[NTAccount]`, `[SecurityIdentifier]`, or `[WindowsIdentity]` and attempts to convert the value to a `[SecurityIdentifier]`.
 .EXAMPLE
     ```PowerShell
     function Test-Identity {
