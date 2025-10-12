@@ -8,7 +8,7 @@
         param (
             [Parameter(Mandatory = $true, Position = 0)]
             [ValidateCimClass(ClassName = 'Win32_UserProfile')]
-            $CimInstance
+            [CimInstance]$CimInstance
         )
     }
     ```
@@ -24,6 +24,20 @@
     ```
 .NOTES
     This attribute can be defined as either `[ValidateCimClass('<CLASS_NAME>')]` or `[ValidateCimClass(ClassName = '<CLASS_NAME>')]`.
+.NOTES
+    This attribute validator is only _required_ for validating the CIM class of a property in a custom class. When attempting to validate the CIM class for a parameter in a function, the `[PSTypeName()]` attribute can be a simpler and more efficient way of doing so:
+    ```PowerShell
+    function Test-CimClass {
+        [CmdletBinding()]
+        param (
+            [Parameter(Mandatory = $true, Position = 0)]
+            [PSTypeName('Microsoft.Management.Infrastructure#root/cimv2/Win32_UserProfile')]
+            [CimInstance]$CimInstance
+        )
+    }
+    ```
+
+    For more information, see [PSTypeNameAttribute Class](https://learn.microsoft.com/en-us/dotnet/api/system.management.automation.pstypenameattribute#remarks).
 .NOTES
     Author: Michael Hollingsworth
 #>
