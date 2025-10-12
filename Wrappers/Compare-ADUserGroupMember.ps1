@@ -12,11 +12,11 @@ function Compare-ADUserGroupMember {
     )
 
     begin {
-        if (-not $ReferenceUser.PSObject.Properties.ContainsKey('MemberOf')) {
+        if (-not $ReferenceUser.PSObject.Properties.Name.Contains('MemberOf')) {
             $ReferenceUser = Get-ADUser -Identity $ReferenceUser -Property MemberOf
         }
     } process {
-        if (-not $DifferenceUser.PSObject.Properties.ContainsKey('MemberOf')) {
+        if (-not $DifferenceUser.PSObject.Properties.Name.Contains('MemberOf')) {
             $DifferenceUser = Get-ADUser -Identity $DifferenceUser -Property MemberOf
         }
 
