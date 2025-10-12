@@ -20,6 +20,6 @@ function Compare-ADUserGroupMember {
             $DifferenceUser = Get-ADUser -Identity $DifferenceUser -Property MemberOf
         }
 
-        return (Compare-Object -RefferenceObject $ReferenceUser -DifferenceObject $DifferenceUser -Property MemberOf -IncludeEqual:(!!$IncludeEqual) -ExcludeDifferent:(!!$ExcludeDifferent))
+        return (Compare-Object -ReferenceObject $ReferenceUser.MemberOf -DifferenceObject $DifferenceUser.MemberOf -IncludeEqual:(!!$IncludeEqual) -ExcludeDifferent:(!!$ExcludeDifferent))
     }
 }
