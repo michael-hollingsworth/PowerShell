@@ -2,7 +2,8 @@ function Resume-ADComputer {
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = [System.Management.Automation.ConfirmImpact]::High)]
     param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
-        [String[]]$Identity,
+        [ValidateNotNullOrEmpty()]
+        [Microsoft.ActiveDirectory.Management.ADComputer[]]$Identity,
         [Switch]$PassThru,
         [Switch]$Force
     )

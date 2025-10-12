@@ -3,7 +3,7 @@ function Suspend-ADComputer {
     param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
-        [String[]]$Identity,
+        [Microsoft.ActiveDirectory.Management.ADComputer[]]$Identity,
         [ValidateNotNullOrEmpty()]
         [String]$Reason = "",
         [String]$NewOU,
@@ -24,27 +24,27 @@ function Suspend-ADComputer {
             }
         }
     } process {
-        foreach ($computer in $Identity) {
+        foreach ($comp in $Identity) {
             try {
-                [Microsoft.ActiveDirectory.Management.ADComputer]$comp = Get-ADComputer -Identity $computer -Property @('Description', 'Info') -ErrorAction Stop
+                [Microsoft.ActiveDirectory.Management.ADComputer]$computer = Get-ADComputer -Identity $comp -Property @('Description', 'Info') -ErrorAction Stop
             } catch {
                 $PSCmdlet.WriteError($_)
                 continue
             }
 
-            if (-not $PSCmdlet.ShouldProcess($comp.Name)) {
+            if (-not $PSCmdlet.ShouldProcess($computer.Name)) {
                 continue
             }
 
-            if (-not $comp.Enabled) {
-                if ([String]::IsNullOrWhiteSpace($comp.Description)) {
+            if (-not $computer.Enabled) {
+                if ([String]::IsNullOrWhiteSpace($computer.Description)) {
                     [String]$description = "^Disabled $([DateTime]::Now.ToString()) - $Reason"
                 } else {
                     #TODO:
-                    if ($comp.Description -match 'Disabled <DATE> - <REASON>') {
+                    if ($computer.Description -match 'Disabled <DATE> - <REASON>') {
 
                     }
-                    [String]$description = $comp.Description
+                    [String]$description = $computer.Description
                 }
 
                 if ($description.Length -gt 4096) {
@@ -52,14 +52,14 @@ function Suspend-ADComputer {
                     [String]$description = "$($description.SubString(0, 4092))..."
                 }
 
-                Set-ADComputer -Identity $comp -Enabled:$false -Description $description -ErrorAction Continue
+                Set-ADComputer -Identity $computer -Enabled:$false -Description $description -ErrorAction Continue
             }
 
-            if (-not ($null -eq $targetIU) -and ($comp.DistinguishedName -notmatch "^CN=$($comp.Name),$($targetOU.DistinguishedName)$")) {
-                [String]$info = $comp.DistinguishedName
+            if (-not ($null -eq $targetIU) -and ($computer.DistinguishedName -notmatch "^CN=$($computer.Name),$($targetOU.DistinguishedName)$")) {
+                [String]$info = $computer.DistinguishedName
 
-                if ([String]::IsNullOrWhiteSpace($comp.Info)) {
-                    $info += "; $($comp.Info)"
+                if ([String]::IsNullOrWhiteSpace($computer.Info)) {
+                    $info += "; $($computer.Info)"
                 }
 
                 #TODO:
@@ -67,17 +67,17 @@ function Suspend-ADComputer {
                     $PSCmdlet.WriteVerbose("")
                     [String]$info = "$($info.SubString(0, 4092))..."
                 }
-                
+
                 try {
-                    Move-ADObject -Identity $comp -TargetPath $targetOU
-                    Set-ADComputer -Identity $comp -Replace @{ Info = $info }
+                    Move-ADObject -Identity $computer -TargetPath $targetOU
+                    Set-ADComputer -Identity $computer -Replace @{ Info = $info }
                 } catch {
                     $PSCmdlet.WriteError($_)
                 }
             }
 
             if ($PassThru) {
-                $PSCmdlet.WriteObject((Get-ADComputer -Identity $comp -Property @('Description', 'Info')))
+                $PSCmdlet.WriteObject((Get-ADComputer -Identity $computer -Property @('Description', 'Info')))
             }
         }
     }

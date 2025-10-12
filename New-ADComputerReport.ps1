@@ -5,7 +5,7 @@ function New-ADComputerReport {
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0, ParameterSetName = 'Identity')]
         #TODO: figure out what kinda black magic Microsoft uses to get the Identity parameter to work
         ## While you're at it, see if it is possible to do all of this inside the native ADComputer object
-        [String[]]$Identity,
+        [Management[]]$Identity,
         [Parameter(Mandatory = $true, ParameterSetName = 'Filter')]
         [ValidateNotNullOrEmpty()]
         [String]$Filter,
