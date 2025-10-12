@@ -65,4 +65,8 @@ class IdentityTransformationAttribute : System.Management.Automation.ArgumentTra
 
         throw ([System.ArgumentException]::new("Failed to convert '$($object.ToString())' to a valid SID."))
     }
+
+    [String] ToString() {
+        return '[IdentityTransformationAttribute()]'
+    }
 }
