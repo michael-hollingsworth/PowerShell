@@ -3,30 +3,23 @@ function Compare-ADUserGroupMember {
     param (
         [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
-        $ReferenceObject,
-        [Parameter(Mandatory = $true, Position = 1)]
+        [Microsoft.ActiveDirectory.Management.ADUser]$ReferenceUser,
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 1)]
         [ValidateNotNullOrEmpty()]
-        $DifferenceObject,
+        [Microsoft.ActiveDirectory.Management.ADUser]$DifferenceUser,
         [Switch]$ExcludeDifferent,
         [Switch]$IncludeEqual
     )
 
     begin {
-        if (-not (($ReferenceObject -is [String]) -or ($ReferenceObject -is [ADUser]))) {
-            throw
-        }
-
-        if (-not (($DifferenceObject -is [String]) -or ($DifferenceObject -is [ADUser]))) {
-            throw
-        }
-
-        if (-not $ReferenceObject.PSObject.Properties.ContainsKey('MemberOf')) {
-            $ReferenceObject = Get-ADUser -Identity $ReferenceObject -Property MemberOf
-        }
-        if (-not $DifferenceObject.PSObject.Properties.ContainsKey('MemberOf')) {
-            $DifferenceObject = Get-ADUser -Identity $DifferenceObject -Property MemberOf
+        if (-not $ReferenceUser.PSObject.Properties.ContainsKey('MemberOf')) {
+            $ReferenceUser = Get-ADUser -Identity $ReferenceUser -Property MemberOf
         }
     } process {
-        Compare-Object -RefferenceObject $ReferenceObject -DifferenceObject $DifferenceObject -Property MemberOf -IncludeEqual:(!!$IncludeEqual) -ExcludeDifferent:(!!$ExcludeDifferent)
+        if (-not $DifferenceUser.PSObject.Properties.ContainsKey('MemberOf')) {
+            $DifferenceUser = Get-ADUser -Identity $DifferenceUser -Property MemberOf
+        }
+
+        return (Compare-Object -RefferenceObject $ReferenceUser -DifferenceObject $DifferenceUser -Property MemberOf -IncludeEqual:(!!$IncludeEqual) -ExcludeDifferent:(!!$ExcludeDifferent))
     }
 }
