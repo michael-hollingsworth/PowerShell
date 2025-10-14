@@ -19,14 +19,35 @@ function Get-ADComputerLastLogon {
     )
 
     begin {
+        [System.Text.RegularExpressions.Regex]$dnPattern = [Regex]::new('(?:(?<attr>[A-Za-z][A-Za-z0-9-]*)=(?<value>(?:\\.|[^,\\])+))(?:,|$)')
         #TODO: Add the remaining default properties
+        #TODO: See if the modifications can be made to the original class without modifying the original object to the point that it breaks things when passing it to Set-ADComputer
         [String[]]$searchProperties = @('LastLogon', 'LastLogonTimestamp')
         $soProperties = @(
             'Name',
+            'Enabled',
             @{ Name = 'LastLogon'; Expression = { [DateTime]::FromFileTime($_.LastLogon) } },
             @{ Name = 'LastLogonTimestamp'; Expression = { [DateTime]::FromFileTime($_.LastLogonTimestamp) } },
+            @{ Name = 'OUPath'; Expression = {
+                [System.Text.RegularExpressions.MatchCollection]$regexMatches = $dnPattern.Matches($_.DistinguishedName)
+                [String[]]$components = foreach ($group in $regexMatches) {
+                    if ($group.Groups[0].Value.StartsWith('CN=')) {
+                        continue
+                    }
+
+                    if ($group.Groups[0].Value.StartsWith('DC=')) {
+                        continue
+                    }
+
+                    $group.Groups.Where({$_.Name -eq 'value'}).Value
+                }
+
+                [Array]::Reverse($components)
+                $components -join '\'
+            }},
             'DistinguishedName',
-            'Sid'
+            'Sid',
+            'GUID'
         )
 
         if ($Properties) {
