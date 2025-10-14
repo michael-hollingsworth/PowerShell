@@ -36,6 +36,10 @@ function Escape-String {
 
     begin {
         [System.Text.StringBuilder]$stringBuilder = [System.Text.StringBuilder]::new()
+
+        if (-not $MetaCharacter.Contains($EscapeCharacter)) {
+            $MetaCharacter += $EscapeCharacter
+        }
     } process {
         foreach ($str in $String) {
             [Int32]$indexOfMetaCharacter = $str.IndexOfAny($MetaCharacter)
@@ -70,6 +74,40 @@ function Escape-String {
             }
 
             $PSCmdlet.WriteObject($stringBuilder.ToString())
+        }
+    }
+}
+
+## Simpler alternative to the function above
+function Escape-String {
+    [CmdletBinding()]
+    [OutputType([String[]])]
+    param (
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
+        [ValidateNotNullOrEmpty()]
+        [String[]]$String,
+        [Parameter(Mandatory = $true, Position = 1)]
+        [ValidateNotNullOrEmpty()]
+        [Char[]]$MetaCharacter,
+        [Parameter(Position = 2)]
+        [PSDefaultValue(Help = '\')]
+        [ValidateNotNullOrEmpty()]
+        [Char]$EscapeCharacter = '\'
+    )
+
+    begin {
+        [System.Text.StringBuilder]$stringBuilder = [System.Text.StringBuilder]::new()
+
+        if (-not $MetaCharacter.Contains($EscapeCharacter)) {
+            $MetaCharacter += $EscapeCharacter
+        }
+    } process {
+        foreach ($str in $String) {
+            foreach ($char in $MetaCharacter) {
+                $str = $str.Replace($char.ToString(), "${EscapeCharacter}${char}")
+            }
+
+            $PSCmdlet.WriteObject($str)
         }
     }
 }
