@@ -36,19 +36,6 @@ class ValidateComTypeAttribute : System.Management.Automation.ValidateArgumentsA
     ValidateComTypeAttribute() {
     }
 
-    ValidateComTypeAttribute([String]$Type) {
-        if ([String]::IsNullOrWhiteSpace($Type)) {
-            throw [System.Management.Automation.ErrorRecord]::new(
-                [System.Management.Automation.PSArgumentNullException]::new('Type'),
-                'ArgumentIsNullOrWhiteSpace',
-                [System.Management.Automation.ErrorCategory]::InvalidArgument,
-                $Type
-            )
-        }
-
-        $this.Type = @(, $Type)
-    }
-
     ValidateComTypeAttribute([String[]]$Type) {
         foreach ($string in $Type) {
             if ([String]::IsNullOrWhiteSpace($string)) {
