@@ -35,8 +35,17 @@ class GroupPolicyAccountInfo {
                 if (($gpUsername = $principalInfo.GetValue('szName', $null)) -and (-not [String]::IsNullOrWhiteSpace($gpUsername))) {
                     [GroupPolicyAccountInfo]::new($gpUsername, $sid)
                 }
+
+                $principalInfo.Dispose()
+                $principalInfo = $null
             }
+
+            $gpPrincipal.Dispose()
+            $gpPrincipal = $null
         }
+
+        $gpDataStore.Dispose()
+        $gpDataStore = $null
 
         return $accountInfoList
     }
