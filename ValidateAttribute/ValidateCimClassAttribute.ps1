@@ -31,7 +31,7 @@
         [CmdletBinding()]
         param (
             [Parameter(Mandatory = $true, Position = 0)]
-            [PSTypeName('Microsoft.Management.Infrastructure#root/cimv2/Win32_UserProfile')]
+            [PSTypeName('Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_UserProfile')]
             [CimInstance]$CimInstance
         )
     }
